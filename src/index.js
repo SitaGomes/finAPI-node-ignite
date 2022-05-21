@@ -7,6 +7,15 @@ app.use(express.json());
 
 const costumers = []
 
+function getBalance(statement) {
+    const balance = statement.reduce((acc, operation) => {
+        if (operation.type === 'credit') 
+            return acc + operation.amount
+        return acc - operation.amount
+    }, 0)
+    return balance
+}
+
 //* Middleware
 function verifyIfAccountExists(req, res, next) {
     const { cpf } = req.headers
@@ -73,6 +82,32 @@ app.post("/deposit", (req, res) => {
         type: "credit",
     }
     
+    costumer.statement.push(statementOperations)
+
+    return res.status(201).send()
+})
+
+app.post("/withdraw", (req, res) => {
+    const {amount, description} = req.body
+    const {costumer} = req
+
+    if (!amount)
+        return res.status(400).json({error: "Bad request missing amount"})
+    if (!description)
+        return res.status(400).json({error: "Bad request missing description"})
+
+    const balance = getBalance(costumer.statement)
+
+    if (balance < amount) 
+        return res.status(400).json({error: "Insufficient funds!"})
+
+    const statementOperations = {
+        amount,
+        description,
+        created_at: new Date(),
+        type: "debit",
+    }
+
     costumer.statement.push(statementOperations)
 
     return res.status(201).send()
