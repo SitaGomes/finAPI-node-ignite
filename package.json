@@ -1,0 +1,18 @@
+{
+  "name": "finAPI",
+  "version": "1.0.0",
+  "description": "Uma api para controle financeiro",
+  "main": "src/index.js",
+  "author": "SitaGomes",
+  "license": "MIT",
+  "private": null,
+  "scripts": {
+    "dev": "nodemon src/index.js"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.16"
+  },
+  "dependencies": {
+    "express": "^4.18.1"
+  }
+}
