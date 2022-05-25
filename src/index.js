@@ -1,10 +1,25 @@
 import express from 'express';
+import { request } from 'express';
 import {v4 as uuidv4} from 'uuid'
 
 const app = express();
 app.use(express.json());
 
 const costumers = []
+
+//* Middleware
+function verifyIfAccountExists(req, res, next) {
+    const { cpf } = req.headers
+
+    const costumer = costumers.find((costumer) => costumer.cpf === cpf)
+
+    if (!costumer)
+        return res.status(400).json({Error: 'Costumer not found'})
+
+    request.costumer = costumer
+
+    return next()
+}
 
 app.post('/account', (req, res) => {
     const {cpf, name} = req.body
@@ -27,14 +42,10 @@ app.post('/account', (req, res) => {
 
 })
 
-app.get("/statement", (req, res) => {
-    const { cpf } = req.headers
+//app.use(verifyIfAccountExists)
 
-    const costumer = costumers.find((costumer) => costumer.cpf === cpf)
-
-    if (!costumer)
-        return res.status(400).json({Error: 'Costumer not found'})
-
+app.get("/statement", verifyIfAccountExists, (req, res) => {
+    const {costumer} = req
     return res.status(200).json({Statement: costumer.statement})
 
 })
