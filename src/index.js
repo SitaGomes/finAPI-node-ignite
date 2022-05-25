@@ -27,8 +27,16 @@ app.post('/account', (req, res) => {
 
 })
 
-app.get('/account', (req, res) => {
-    return res.status(201).send()
+app.get("/statement", (req, res) => {
+    const { cpf } = req.headers
+
+    const costumer = costumers.find((costumer) => costumer.cpf === cpf)
+
+    if (!costumer)
+        return res.status(400).json({Error: 'Costumer not found'})
+
+    return res.status(200).json({Statement: costumer.statement})
+
 })
 
 const PORT = 3333
