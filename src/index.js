@@ -151,6 +151,13 @@ app.delete("/account", verifyIfAccountExists, (req, res) => {
     return res.status(204).json(costumers)
 })
 
+app.get("/balance", verifyIfAccountExists, (req, res) => {
+    const {costumer} = req
+
+    const balance = getBalance(costumer.statement)
+
+    return res.status(200).json({Balance: balance})
+})
 
 const PORT = 3333
 app.listen(PORT)
