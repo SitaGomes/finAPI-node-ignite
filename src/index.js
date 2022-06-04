@@ -57,15 +57,15 @@ app.post('/account', (req, res) => {
 
 })
 
-app.use(verifyIfAccountExists)
+/*? Using the middleware function in every request below */
+//app.use(verifyIfAccountExists)
 
-app.get("/statement", (req, res) => {
+app.get("/statement", verifyIfAccountExists, (req, res) => {
     const {costumer} = req
     return res.status(200).json({Statement: costumer.statement})
-
 })
 
-app.post("/deposit", (req, res) => {
+app.post("/deposit",verifyIfAccountExists, (req, res) => {
     const { description, amount } = req.body
     const {costumer} = req
 
@@ -87,7 +87,7 @@ app.post("/deposit", (req, res) => {
     return res.status(201).send()
 })
 
-app.post("/withdraw", (req, res) => {
+app.post("/withdraw",verifyIfAccountExists, (req, res) => {
     const {amount, description} = req.body
     const {costumer} = req
 
@@ -111,6 +111,21 @@ app.post("/withdraw", (req, res) => {
     costumer.statement.push(statementOperations)
 
     return res.status(201).send()
+})
+
+app.get("/statement/date", (req, res) => {
+    const {costumer} = req
+    const {date} = req.query
+
+    const dateFormat = new Date(date + " 00:00")
+
+    const statement = costumer.statement.filter(
+        (statement) => 
+            statement.created_at.toDateString() === 
+            new Date(dateFormat).toDateString())
+
+    return res.status(200).json({Statement: statement})
+
 })
 
 const PORT = 3333
