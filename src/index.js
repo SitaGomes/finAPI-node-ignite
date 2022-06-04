@@ -128,5 +128,19 @@ app.get("/statement/date", (req, res) => {
 
 })
 
+app.put("/account", verifyIfAccountExists, (req, res) => {
+    const {name} = req.body
+    const {costumer} = req
+
+    costumer.name = name
+
+    return res.status(201).send()
+})
+
+app.get("/account", verifyIfAccountExists, (req, res) => {
+    const {costumer} = req
+
+    return res.status(200).json({User: costumer})
+})
 const PORT = 3333
 app.listen(PORT)
