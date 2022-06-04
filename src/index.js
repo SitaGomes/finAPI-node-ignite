@@ -142,5 +142,15 @@ app.get("/account", verifyIfAccountExists, (req, res) => {
 
     return res.status(200).json({User: costumer})
 })
+
+app.delete("/account", verifyIfAccountExists, (req, res) => {
+    const {costumer} = req
+
+    costumers.splice(costumer, 1)
+
+    return res.status(204).json(costumers)
+})
+
+
 const PORT = 3333
 app.listen(PORT)
